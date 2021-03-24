@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "httplib.hpp"
+#include "graphe.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -23,7 +24,7 @@ int main(int argc, char** argv) {
   //http server
 
   Server srv ;
-  
+
   //api for interaction
 
   srv.Get("/board", [b](const Request& req, Response& res) {
@@ -95,7 +96,7 @@ int main(int argc, char** argv) {
   }) ;
 
   //serve appdata folder for static files
-  
+
   auto ret = srv.set_mount_point("/", "./appdata") ;
   if(!ret) {
     std::cout << "données de l'application introuvables" << std::endl ;
