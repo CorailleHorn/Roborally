@@ -2,13 +2,22 @@
 #define ROBORALLY_GRAPHE_HPP_
 
 #include <vector>
-#include "cellule.hpp"
+#include "board.hpp"
+
+struct Noeud {
+  RR::Robot rbt;
+  std::vector<Noeud*> linked;
+};
 
 class Graphe {
 public:
 
+  void initGraphe(RR::Robot init, RR::Board* board);
+  ~Graphe();
+
 private:
-  std::vector<Cellule> cellules;
+  int nbsommet = 0;
+  std::vector<Noeud*> noeuds;
 };
 
 

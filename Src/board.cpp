@@ -39,6 +39,11 @@ bool Location::operator==(const Location& rhs) const {
   return (line == rhs.line) && (column == rhs.column) ;
 }
 
+void Location::operator=(const Location &L) {
+  line = L.line;
+  column = L.column;
+}
+
 std::size_t LocationHash::operator()(const Location& l) const {
   if(sizeof(long long) == 2*sizeof(int)) {
     //this supposedly always happens
@@ -61,31 +66,31 @@ std::size_t LocationHash::operator()(const Location& l) const {
 /* Check whether a tile is a fast belt */
 static bool tile_is_fast(
     Board::TileType type
-    ) 
+    )
 {
-  return 
-    type > Board::TileType::JOIN_EW_TO_S && 
+  return
+    type > Board::TileType::JOIN_EW_TO_S &&
     type < Board::TileType::ROTATE_RIGHT ;
 }
 
 /* Check the direction in which the tiles moves the robot if any */
 static Direction tile_direction(
     Board::TileType type
-    ) 
+    )
 {
   /* rotating tile and regular tiles have no direction */
-  if(type > Board::TileType::FAST_JOIN_EW_TO_S) 
+  if(type > Board::TileType::FAST_JOIN_EW_TO_S)
     return Direction::NONE ;
 
   /* fast belts are ordered the same way as regular belts */
   int base_type = +type % 24 ;
 
   /* non rotating belts, enum conversion is straightforward */
-  if(base_type < +Board::TileType::TURN_SE) 
+  if(base_type < +Board::TileType::TURN_SE)
     return (Direction) +base_type ;
 
   /* conversion table for turns and perpendicular joins */
-  static const Direction directions[8] = 
+  static const Direction directions[8] =
   {
     Direction::EAST,
     Direction::WEST,
@@ -98,44 +103,44 @@ static Direction tile_direction(
   } ;
 
   /* turns and perpendicular joins */
-  if(base_type < +Board::TileType::JOIN_NS_TO_E) 
+  if(base_type < +Board::TileType::JOIN_NS_TO_E)
     return directions[(base_type - +Board::TileType::TURN_SE)%8] ;
 
   /* opposite joins, enum conversion is straightforward */
   return (Direction) (base_type - +Board::TileType::JOIN_NS_TO_E) ;
-  
+
 }
 
-static Rotation tile_rotation( 
+static Rotation tile_rotation(
     Board::TileType type,
     Direction direction /* some tiles depend on the incoming direction */
     )
 {
   /* static tiles */
-  if(type == Board::TileType::NOTHING) 
+  if(type == Board::TileType::NOTHING)
     return Rotation::NONE ;
 
   /* simple rotating tiles */
-  if(type > Board::TileType::FAST_JOIN_EW_TO_S) 
+  if(type > Board::TileType::FAST_JOIN_EW_TO_S)
     return (Rotation) ((+type - +Board::TileType::ROTATE_RIGHT) % 2) ;
 
   /* fast belts are ordered the same way as regular belts */
   int base_type =  +type % 24 ;
 
   /* non rotating belts */
-  if(base_type < +Board::TileType::TURN_SE) 
+  if(base_type < +Board::TileType::TURN_SE)
     return Rotation::NONE ;
 
   /* simple rotating belts */
-  if(base_type < +Board::TileType::JOIN_S_TO_E) 
+  if(base_type < +Board::TileType::JOIN_S_TO_E)
     return (Rotation) ((base_type - +Board::TileType::TURN_SE) % 2) ;
 
   /* joins depend on the incoming direction */
-  if(direction == Direction::NONE) 
+  if(direction == Direction::NONE)
     return Rotation::NONE ;
 
   /* constraint table for perpendicular joins */
-  static const Direction perp_directions[8] = 
+  static const Direction perp_directions[8] =
   {
     Direction::SOUTH,
     Direction::SOUTH,
@@ -150,7 +155,7 @@ static Rotation tile_rotation(
   /* perpendicular joins */
   if(base_type < +Board::TileType::JOIN_NS_TO_E)
   {
-    if(direction == perp_directions[base_type - +Board::TileType::JOIN_S_TO_E]) 
+    if(direction == perp_directions[base_type - +Board::TileType::JOIN_S_TO_E])
     {
       return (Rotation) (base_type % 2) ;
     }
@@ -162,12 +167,12 @@ static Rotation tile_rotation(
 
   /* opposite joins */
   if((base_type - +Board::TileType::JOIN_NS_TO_E) % 2 != +direction % 2)
-  {    
+  {
     /* this will be hard to figure in a month */
     /* (five years later) indeed, I'll trust myself on this */
     return (Rotation) ((
-        +direction/2 + 
-        +direction%2 + 
+        +direction/2 +
+        +direction%2 +
         (base_type - +Board::TileType::JOIN_NS_TO_E)/2
         ) % 2) ;
   }
@@ -180,9 +185,9 @@ static Rotation tile_rotation(
 
 /* move the robot in a direction */
 static void robot_push(
-    Robot& robot, 
+    Robot& robot,
     Direction direction
-    ) 
+    )
 {
   /* a dead robot does not move */
   if(robot.status == Robot::Status::DEAD) return ;
@@ -198,9 +203,9 @@ static void robot_push(
 
 /* rotate robot in a direction */
 static void robot_rotate(
-    Robot& robot, 
+    Robot& robot,
     Rotation rotation
-    ) 
+    )
 {
   /* a dead robot does not rotate */
   if(robot.status == Robot::Status::DEAD) return ;
@@ -225,7 +230,7 @@ static void robot_apply(
     Robot& robot
     )
 {
-  try 
+  try
   {
     /* find the tile the robot is on, throws if does not exist */
     Board::TileType tile = board.tiles.at(robot.location) ;
@@ -292,9 +297,9 @@ void Board::save(
   output.open(filename) ;
 
   for(std::pair<Location, TileType> tile : tiles) {
-    output << tile.first.line 
-      << " " << tile.first.column 
-      << " " << +tile.second 
+    output << tile.first.line
+      << " " << tile.first.column
+      << " " << +tile.second
       << std::endl ;
   }
 }
@@ -333,19 +338,19 @@ void Board::play (
   /* determine the varying coordinate */
   switch(move)
   {
-    case Robot::Move::FORWARD_1 : 
+    case Robot::Move::FORWARD_1 :
       robot_push(robot, (Direction) robot.status) ;
       break ;
-    case Robot::Move::FORWARD_2 : 
-      robot_push(robot, (Direction) robot.status) ;
-      robot_push(robot, (Direction) robot.status) ;
-      break ;
-    case Robot::Move::FORWARD_3 : 
-      robot_push(robot, (Direction) robot.status) ;
+    case Robot::Move::FORWARD_2 :
       robot_push(robot, (Direction) robot.status) ;
       robot_push(robot, (Direction) robot.status) ;
       break ;
-    case Robot::Move::BACKWARD_1 : 
+    case Robot::Move::FORWARD_3 :
+      robot_push(robot, (Direction) robot.status) ;
+      robot_push(robot, (Direction) robot.status) ;
+      robot_push(robot, (Direction) robot.status) ;
+      break ;
+    case Robot::Move::BACKWARD_1 :
       robot_push(robot, (Direction) ((+robot.status+2)%4)) ;
       break ;
     case Robot::Move::TURN_LEFT :
