@@ -2,19 +2,21 @@ CXX      = g++
 
 .DEFAULT_GOAL := all
 
-SOURCES = 
+SOURCES =
 SOURCES += board.cpp
+SOURCES += graphe.cpp
+#SOURCES += carte.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-CXXFLAGS += -g -Wall -pedantic
+CXXFLAGS += -g -Wall --std=c++14 -pedantic
 LDFLAGS +=
 
 $(OBJECTS) : %.o : %.cpp
 	$(CXX) -MMD $(CXXFLAGS) -c $< -o $@
 
 CLEAN_OBJECTS = $(OBJECTS)
-TARGETS = 
+TARGETS =
 
 ########## test_board ##########
 
@@ -23,7 +25,7 @@ TEST_BOARD_OBJECTS = $(TEST_BOARD_SOURCES:.cpp=.o)
 
 test_board : $(TEST_BOARD_OBJECTS) $(OBJECTS) $(HEADERS)
 	$(CXX) $(TEST_BOARD_OBJECTS) $(OBJECTS) -o $@ $(LDFLAGS)
-	
+
 $(TEST_BOARD_OBJECTS): %.o : %.cpp
 	$(CXX) -MMD $(CXXFLAGS) -c $< -o $@
 
@@ -38,7 +40,7 @@ APP_OBJECTS = $(APP_SOURCES:.cpp=.o)
 
 app : $(APP_OBJECTS) $(OBJECTS) $(HEADERS)
 	$(CXX) -pthread $(APP_OBJECTS) $(OBJECTS) -o $@ $(LDFLAGS)
-	
+
 $(APP_OBJECTS): %.o : %.cpp
 	$(CXX) -MMD $(CXXFLAGS) -c $< -o $@
 
