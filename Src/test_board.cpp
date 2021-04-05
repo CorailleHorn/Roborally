@@ -7,9 +7,9 @@ int main() {
   Board b("board.txt");
   b.save("/tmp/cpy.txt");
   Robot rbt;
-  rbt.location = Location(0,1);
-  rbt.status = Robot::Status::EAST;
+  std::cout<< "Ca commence"<< std::endl;
   Graphe g(rbt, b);
+
 
   return 0;
 }

@@ -18,7 +18,7 @@ struct Location {
   Location() {}
 
   bool operator==(const Location& rhs) const ;
-  void operator=(const Location& l); 
+  void operator=(const Location& l);
   int line ;
   int column ;
 
@@ -60,6 +60,14 @@ struct Robot {
 
   Location location ;
   Status status ;
+
+  /* Constructors & Operators */
+  Robot();
+  Robot(const Location& l, const Status& s);
+  Robot(const Robot& rbt);
+
+  void operator=(const Robot& rbt);
+
 } ;
 
 /* Board */

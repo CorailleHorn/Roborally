@@ -11,6 +11,7 @@ struct Noeud {
 
   void setValues(const Robot& rbt);
   void addLink(Noeud* n);
+  bool equalTo(const Robot& rbt) const;
 };
 
 class Graphe {
@@ -18,7 +19,8 @@ public:
 
   Graphe(const Robot& rbt, const Board& board);
   void construitGraphe(const Robot& rbt, const Board& board);
-  //~Graphe();
+  int existeDeja(const Robot& rbt) const;
+  ~Graphe();
 
 private:
   std::vector<Robot::Move> moves = {
