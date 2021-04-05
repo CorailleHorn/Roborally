@@ -9,9 +9,11 @@ struct Noeud {
   RR::Robot info;
   std::vector<Noeud*> linked;
 
+
   void setValues(const Robot& rbt);
   void addLink(Noeud* n);
   bool equalTo(const Robot& rbt) const;
+  void display(const int& n, const bool& withLinks);
 };
 
 class Graphe {

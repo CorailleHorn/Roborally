@@ -1,7 +1,9 @@
 #include <vector>
 #include <iostream>
+#include <assert.h>
 #include "graphe.hpp"
 #include "board.hpp"
+
 
 using namespace RR;
 // ------------- Struct Noeud ------------- //
@@ -18,6 +20,16 @@ bool Noeud::equalTo(const Robot& rbt) const {
   if(info.location == rbt.location && info.status == rbt.status)
     return true;
   return false;
+}
+
+void Noeud::display(const int& n, const bool& withLinks) {
+  std::cout << "Je suis le noeud numero " << n <<  " avec pour coordonnées : "
+          << std::endl
+          << "(" << info.location.line << "," << info.location.column << ") "
+          << std::endl;
+  if(withLinks) {
+    std::cout << "Je pointe sur (normalement 7) : " << linked.size() << " noeud(s)"<< std::endl << std::endl;
+  }
 }
 
 
@@ -42,32 +54,35 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
   noeuds.push_back(n0);
   nbsommet++;
 
-  int visited = 0; //entier tel que 1 = un noeud étudié
+  int visited = -1; //entier correspondant a l'indice du noeud étudié dans le tableau
   Robot transfer; //donnée pour copier celles du noeud en étude
   int tmp; //valeur tampon
 
 
-  while(visited != nbsommet) {
+  while(visited < nbsommet) {
     visited++;
-    for(int i=0; i < 7; i++) {
-      transfer = noeuds[nbsommet - 1]->info;
+    for(unsigned int i = 0; i < 7; i++) {
+      transfer = noeuds[visited]->info;
       board.play(transfer,moves[i]);
 
       if(transfer.status == Robot::Status::DEAD) {
-        noeuds[nbsommet - 1]->addLink(detruit);
+        noeuds[visited]->addLink(detruit);
       }
       else  {
         tmp = existeDeja(transfer);
         if(tmp != -1) {
-          noeuds[nbsommet - 1]->addLink(noeuds[tmp]);
+          noeuds[visited]->addLink(noeuds[tmp]);
         } else {
           Noeud* n = new Noeud;
           n->setValues(transfer);
           noeuds.push_back(n);
+          noeuds[visited]->addLink(noeuds[nbsommet]);
           nbsommet++;
         }
       }
     }
+    noeuds[visited]->display(visited,true);
+    assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
     //std::cout<< visited + " cell analyzed"<< std::endl;
   }
   std::cout<< visited + " cell analyzed"<< std::endl;
