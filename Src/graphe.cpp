@@ -54,13 +54,12 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
   noeuds.push_back(n0);
   nbsommet++;
 
-  int visited = -1; //entier correspondant a l'indice du noeud étudié dans le tableau
+  int visited = 0; //entier correspondant a l'indice du noeud étudié dans le tableau
   Robot transfer; //donnée pour copier celles du noeud en étude
   int tmp; //valeur tampon
 
 
   while(visited < nbsommet) {
-    visited++;
     for(unsigned int i = 0; i < 7; i++) {
       transfer = noeuds[visited]->info;
       board.play(transfer,moves[i]);
@@ -77,13 +76,14 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
           n->setValues(transfer);
           noeuds.push_back(n);
           nbsommet++;
-          noeuds[visited]->addLink(noeuds[nbsommet - 1]); 
+          noeuds[visited]->addLink(noeuds[nbsommet - 1]);
         }
       }
     }
     noeuds[visited]->display(visited,true);
     assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
     //std::cout<< visited + " cell analyzed"<< std::endl;
+    visited++;
   }
   std::cout<< visited + " cell analyzed"<< std::endl;
 }
