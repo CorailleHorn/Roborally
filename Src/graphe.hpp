@@ -7,12 +7,16 @@
 struct Noeud {
   RR::Robot rbt;
   std::vector<Noeud*> linked;
+
+  void setValues(const RR::Robot& rbt);
+  void addLink(const Noeud& n);
 };
 
 class Graphe {
 public:
 
-  void initGraphe(RR::Robot init, RR::Board* board);
+  void initGraphe(const RR::Robot& rbt);
+  void construitGraphe(RR::Robot& rbt, RR::Board* board);
   ~Graphe();
 
 private:
