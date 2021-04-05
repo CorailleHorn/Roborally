@@ -18,7 +18,6 @@ struct Location {
   Location() {}
 
   bool operator==(const Location& rhs) const ;
-  void operator=(const Location& l);
   int line ;
   int column ;
 

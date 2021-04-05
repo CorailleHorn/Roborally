@@ -76,8 +76,8 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
           Noeud* n = new Noeud;
           n->setValues(transfer);
           noeuds.push_back(n);
-          noeuds[visited]->addLink(noeuds[nbsommet]);
           nbsommet++;
+          noeuds[visited]->addLink(noeuds[nbsommet - 1]); 
         }
       }
     }

@@ -39,10 +39,7 @@ bool Location::operator==(const Location& rhs) const {
   return (line == rhs.line) && (column == rhs.column) ;
 }
 
-void Location::operator=(const Location &L) {
-  line = L.line;
-  column = L.column;
-}
+
 
 std::size_t LocationHash::operator()(const Location& l) const {
   if(sizeof(long long) == 2*sizeof(int)) {
