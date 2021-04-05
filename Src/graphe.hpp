@@ -13,14 +13,14 @@ struct Noeud {
   void setValues(const Robot& rbt);
   void addLink(Noeud* n);
   bool equalTo(const Robot& rbt) const;
-  void display(const int& n, const bool& withLinks);
+  void display(const int& n, const bool& withLinks) const;
 };
 
 class Graphe {
 public:
 
   Graphe(const Robot& rbt, const Board& board);
-  void construitGraphe(const Robot& rbt, const Board& board);
+  void construitGraphe(const Robot& rbt, const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
   ~Graphe();
 

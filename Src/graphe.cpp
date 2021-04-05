@@ -22,7 +22,7 @@ bool Noeud::equalTo(const Robot& rbt) const {
   return false;
 }
 
-void Noeud::display(const int& n, const bool& withLinks) {
+void Noeud::display(const int& n, const bool& withLinks) const {
   std::cout << "Je suis le noeud numero " << n <<  " avec pour coordonnées : "
           << std::endl
           << "(" << info.location.line << "," << info.location.column << ") "
@@ -36,10 +36,10 @@ void Noeud::display(const int& n, const bool& withLinks) {
 // ------------- Classe Graphe ------------- //
 
 Graphe::Graphe(const Robot& rbt, const Board& board) {
-  construitGraphe(rbt, board);
+  construitGraphe(rbt, board, true);
 }
 
-void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
+void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& verbose) {
 
   //on crée le noeud vers lequel va pointer les déplacements détruit
   detruit = new Noeud();
@@ -80,12 +80,14 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board) {
         }
       }
     }
-    noeuds[visited]->display(visited,true);
+    if(verbose) {
+      noeuds[visited]->display(visited,true);
+    }
     assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
-    //std::cout<< visited + " cell analyzed"<< std::endl;
     visited++;
   }
-  std::cout<< visited + " cell analyzed"<< std::endl;
+  std::cout<<std::endl;
+  std::cout<<"Done, "<< nbsommet << " cells produced" << std::endl;
 }
 
 int Graphe::existeDeja(const Robot& rbt) const {

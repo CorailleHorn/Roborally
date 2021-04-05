@@ -7,7 +7,6 @@ int main() {
   Board b("board.txt");
   b.save("/tmp/cpy.txt");
   Robot rbt;
-  std::cout<< "Ca commence"<< std::endl;
   Graphe g(rbt, b);
 
 
