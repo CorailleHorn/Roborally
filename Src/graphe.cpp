@@ -106,11 +106,14 @@ int Graphe::existeDeja(const Robot& rbt) const {
 }
 
 void Graphe::pluscourtChemin(const Robot& init) {
-  int info_noeuds[nbsommet][2];
+  int info_noeuds[nbsommet][3];
   int i;
   for(i = 0; i < nbsommet; i++) {
     info_noeuds[i][0] = 10000; //la distance parcouru
     info_noeuds[i][1] = -1; //la cellule parente
+    info_noeuds[i][2] = -1; //le mouvement entre la cellule parente et celle ci
+    //(indice dans le tableau move pour économiser de l'espace mémoire)
+
   }
 
   int tmp = existeDeja(init); // on retrouve le noeud de départ dans le graphe
@@ -121,6 +124,7 @@ void Graphe::pluscourtChemin(const Robot& init) {
   file.push(tmp); //on ajoute l'indice noeud de départ
   info_noeuds[tmp][0] = 0;
   info_noeuds[tmp][1] = tmp; //on met comme parent lui-meme car c'est le point de départ
+  info_noeuds[tmp][2] = -1;
 
   int distD; // la distance parcouru jusqu'a la cellule étudié
   int distA; //la distance
@@ -132,6 +136,7 @@ void Graphe::pluscourtChemin(const Robot& init) {
     tmp = file.front(); //on prend le dernier elem et on le retire de la file
     file.pop();
     distD = info_noeuds[tmp][0] + 1;
+    indiceM = 0;
     for(auto j = noeuds[tmp]->linked.begin(); j != noeuds[tmp]->linked.end(); ++j) {
       indiceI = (*j)->indice; //on récupère l'indice dans le tableau linked
 
@@ -141,14 +146,16 @@ void Graphe::pluscourtChemin(const Robot& init) {
         if(distD < distA) {
           info_noeuds[indiceI][0] = distD;
           info_noeuds[indiceI][1] = tmp;
+          info_noeuds[indiceI][2] = indiceM;
           file.push(indiceI);
         }
       }
+      indiceM++; // on incrémente le compteur pour les mouvements associés
     }
   }
 
   //on récupère la solution parmi 4 possible (au max)
-  int solution; //indice de la solution (on prendra la première proposé)
+  int solution; //indice de la solution (on prendra la première proposé au poid le plus faible)
   int poidmin = 100000;
   for(i = 0; i < 4; i++) {
     tmp = existeDeja(Robot(Location(5,4), positions[i]));
@@ -160,16 +167,41 @@ void Graphe::pluscourtChemin(const Robot& init) {
 
   std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl << std::endl;
 
-  //on rempli le tableau des indices des solutions dans l'ordre inverse
-  std::vector<int> indices_solution;
+  //on rempli le tableau des mouvements dans l'ordre inverse
+  std::vector<Robot::Move> mouvements_opti;
   int s = solution;
   for(i = 0; i < info_noeuds[solution][0]; i++) {
-    indices_solution.push_back(s);
+    mouvements_opti.push_back(moves[info_noeuds[s][2]]);
     s = info_noeuds[s][1]; //indice de la cellule parente a la solution
   }
-  //on affiche les résultats
-  for(int j  = 3; j > -1; j--) {
-    noeuds[indices_solution[j]]->display(true);
+
+
+  //on affiche les résultats en inversant l'odre de lecture du tableau
+  for(int j = 2; j > -1; j--) {
+    switch(mouvements_opti[j]) {
+      case Robot::Move::FORWARD_1:
+        std::cout<<  "Avancer de 1" <<std::endl;
+        break;
+      case Robot::Move::FORWARD_2:
+        std::cout<<  "Avancer de 2" <<std::endl;
+        break;
+      case Robot::Move::FORWARD_3:
+        std::cout<<  "Avancer de 3" <<std::endl;
+        break;
+      case Robot::Move::BACKWARD_1:
+        std::cout<<  "Reculer" <<std::endl;
+        break;
+      case Robot::Move::TURN_LEFT:
+        std::cout<<  "Tourner a gauche" <<std::endl;
+        break;
+      case Robot::Move::TURN_RIGHT:
+        std::cout<<  "Tourner à droite" <<std::endl;
+        break;
+      case Robot::Move::U_TURN:
+        std::cout<<  "Faire demi-tour" <<std::endl;
+        break;
+    }
+
   }
 
 }
