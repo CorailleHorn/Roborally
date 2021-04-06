@@ -160,6 +160,18 @@ void Graphe::pluscourtChemin(const Robot& init) {
   noeuds[solution]->display(true);
   std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl;
 
+  //on rempli le tableau des indices des solutions dans
+  std::vector<int> indices_solution;
+  int s = solution;
+  for(i = 0; i < info_noeuds[solution][0]; i++) {
+    indices_solution.push_back(s);
+    s = info_noeuds[s][1]; //indice de la cellule parente a la solution
+  }
+  //on affiche les résultats
+  for(int j  = 0; j < 4; j++) {
+    noeuds[indices_solution[j]]->display(true);
+  }
+
 
 }
 
