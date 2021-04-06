@@ -101,6 +101,8 @@ int Graphe::existeDeja(const Robot& rbt) const {
   return -1;
 }
 
+
+
 Graphe::~Graphe(){
   delete detruit;
   for(long unsigned int i = 0; i < noeuds.size(); i++) {

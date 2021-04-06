@@ -22,6 +22,8 @@ public:
   Graphe(const Robot& rbt, const Board& board);
   void construitGraphe(const Robot& rbt, const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
+
+  void pluscourtChemin();
   ~Graphe();
 
 private:
