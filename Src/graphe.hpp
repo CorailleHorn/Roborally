@@ -23,7 +23,7 @@ public:
   void construitGraphe(const Robot& rbt, const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
 
-  void pluscourtChemin();
+  void pluscourtChemin(const Robot& init, const Location& arrivee);
   ~Graphe();
 
 private:

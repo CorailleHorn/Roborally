@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <assert.h>
+#include <queue>
 #include "graphe.hpp"
 #include "board.hpp"
 
@@ -101,6 +102,39 @@ int Graphe::existeDeja(const Robot& rbt) const {
   return -1;
 }
 
+void Graphe::pluscourtChemin(const Robot& init, const Location& arrivee) {
+  int info_noeuds[nbsommet][2];
+  int i;
+  for(i = 0; i < nbsommet; i++) {
+    info_noeuds[i][0] = 100000; //la distance parcouru
+    info_noeuds[i][1] = 100000; //la cellule parente
+  }
+
+  int tmp = existeDeja(init); // on retrouve le noeud de départ dans le graphe
+  if(tmp == -1)
+    return; //si jamais la position n'existe pas dans le graphe on termine le programme
+  std::queue<int> file; //file d'indice a étudier
+
+  file.push(tmp); //on ajoute l'indice noeud de départ
+  info_noeuds[tmp][0] = 0;
+  info_noeuds[tmp][1] = tmp; //on met comme parent lui-meme car c'est le point de départ
+
+  int distD;
+  int distA;
+
+  while(!file.empty()) {
+    tmp = file.front(); //on prend le dernier elem et on le retire de la file
+    file.pop();
+    distD = info_noeuds[tmp][0] + 1;
+    for(i = 0; i < 7; i++) {
+      distA = info_noeuds[i][0];
+      if(distD < distA) {
+        info_noeuds[i][0] = distD;
+        info_noeuds[i][1] = tmp;
+      }
+    }
+  }
+}
 
 
 Graphe::~Graphe(){
