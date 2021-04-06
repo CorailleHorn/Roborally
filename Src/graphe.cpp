@@ -36,7 +36,7 @@ void Noeud::display(const int& n, const bool& withLinks) const {
 // ------------- Classe Graphe ------------- //
 
 Graphe::Graphe(const Robot& rbt, const Board& board) {
-  construitGraphe(rbt, board, true);
+  construitGraphe(rbt, board, false);
 }
 
 void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& verbose) {
@@ -60,30 +60,32 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
 
 
   while(visited < nbsommet) {
-    for(unsigned int i = 0; i < 7; i++) {
-      transfer = noeuds[visited]->info;
-      board.play(transfer,moves[i]);
+    if( not(noeuds[visited]->info.location == Location(5,4)) ) {
+      for(unsigned int i = 0; i < 7; i++) {
+        transfer = noeuds[visited]->info;
+        board.play(transfer,moves[i]);
 
-      if(transfer.status == Robot::Status::DEAD) {
-        noeuds[visited]->addLink(detruit);
-      }
-      else  {
-        tmp = existeDeja(transfer);
-        if(tmp != -1) {
-          noeuds[visited]->addLink(noeuds[tmp]);
-        } else {
-          Noeud* n = new Noeud;
-          n->setValues(transfer);
-          noeuds.push_back(n);
-          nbsommet++;
-          noeuds[visited]->addLink(noeuds[nbsommet - 1]);
+        if(transfer.status == Robot::Status::DEAD) {
+          noeuds[visited]->addLink(detruit);
+        }
+        else  {
+          tmp = existeDeja(transfer);
+          if(tmp != -1) {
+            noeuds[visited]->addLink(noeuds[tmp]);
+          } else {
+            Noeud* n = new Noeud;
+            n->setValues(transfer);
+            noeuds.push_back(n);
+            nbsommet++;
+            noeuds[visited]->addLink(noeuds[nbsommet - 1]);
+          }
         }
       }
+      if(verbose) {
+        noeuds[visited]->display(visited,true);
+      }
+      assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
     }
-    if(verbose) {
-      noeuds[visited]->display(visited,true);
-    }
-    assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
     visited++;
   }
   std::cout<<std::endl;
