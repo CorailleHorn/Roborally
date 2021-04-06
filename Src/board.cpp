@@ -60,7 +60,7 @@ std::size_t LocationHash::operator()(const Location& l) const {
 
 // Constructors & Operators of robot //
 
-Robot::Robot() : location(Location(0,1)), status(Status::EAST) {}
+Robot::Robot() : location(Location(0,1)), status(Status::SOUTH) {}
 
 Robot::Robot(const Location& l, const Status& s) : location(l), status(s) {}
 
