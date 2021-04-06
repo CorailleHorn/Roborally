@@ -168,43 +168,47 @@ void Graphe::pluscourtChemin(const Robot& init) {
   std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl << std::endl;
 
   //on rempli le tableau des mouvements dans l'ordre inverse
-  std::vector<Robot::Move> mouvements_opti;
+  std::vector<int> mouvements_opti;
   int s = solution;
   for(i = 0; i < info_noeuds[solution][0]; i++) {
-    mouvements_opti.push_back(moves[info_noeuds[s][2]]);
+    mouvements_opti.push_back(info_noeuds[s][2]);
     s = info_noeuds[s][1]; //indice de la cellule parente a la solution
   }
 
 
   //on affiche les résultats en inversant l'odre de lecture du tableau
   for(int j = 2; j > -1; j--) {
-    switch(mouvements_opti[j]) {
-      case Robot::Move::FORWARD_1:
-        std::cout<<  "Avancer de 1" <<std::endl;
-        break;
-      case Robot::Move::FORWARD_2:
-        std::cout<<  "Avancer de 2" <<std::endl;
-        break;
-      case Robot::Move::FORWARD_3:
-        std::cout<<  "Avancer de 3" <<std::endl;
-        break;
-      case Robot::Move::BACKWARD_1:
-        std::cout<<  "Reculer" <<std::endl;
-        break;
-      case Robot::Move::TURN_LEFT:
-        std::cout<<  "Tourner a gauche" <<std::endl;
-        break;
-      case Robot::Move::TURN_RIGHT:
-        std::cout<<  "Tourner à droite" <<std::endl;
-        break;
-      case Robot::Move::U_TURN:
-        std::cout<<  "Faire demi-tour" <<std::endl;
-        break;
-    }
-
+    afficheMouvement(mouvements_opti[j]);
   }
 
 }
+
+void afficheMouvement(const int& indice) {
+  switch(indice) {
+    case 0:
+      std::cout<<  "Avancer de 1" <<std::endl;
+      break;
+    case 1:
+      std::cout<<  "Avancer de 2" <<std::endl;
+      break;
+    case 2:
+      std::cout<<  "Avancer de 3" <<std::endl;
+      break;
+    case 3:
+      std::cout<<  "Reculer" <<std::endl;
+      break;
+    case 4:
+      std::cout<<  "Tourner a gauche" <<std::endl;
+      break;
+    case 5:
+      std::cout<<  "Tourner à droite" <<std::endl;
+      break;
+    case 6:
+      std::cout<<  "Faire demi-tour" <<std::endl;
+      break;
+  }
+}
+
 
 
 Graphe::~Graphe(){

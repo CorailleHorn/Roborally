@@ -2,6 +2,7 @@
 #define ROBORALLY_GRAPHE_HPP_
 
 #include <vector>
+#include <iostream>
 #include "board.hpp"
 using namespace RR;
 
@@ -47,6 +48,7 @@ private:
   std::vector<Noeud*> noeuds;
   Noeud* detruit;
 };
+void afficheMouvement(const int& indice);
 
 
 #endif

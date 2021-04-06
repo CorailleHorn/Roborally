@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "graphe.hpp"
+#include "card.hpp"
 #include <iostream>
 using namespace RR;
 
@@ -9,7 +10,9 @@ int main() {
   Robot rbt;
   Graphe g(rbt, b);
   g.pluscourtChemin(rbt);
-
+  std::cout<<std::endl;
+  card c;
+  c.drawcard();
 
   return 0;
 }

@@ -5,7 +5,7 @@ CXX      = g++
 SOURCES =
 SOURCES += board.cpp
 SOURCES += graphe.cpp
-#SOURCES += carte.cpp
+SOURCES += card.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
