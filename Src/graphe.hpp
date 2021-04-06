@@ -8,12 +8,12 @@ using namespace RR;
 struct Noeud {
   RR::Robot info;
   std::vector<Noeud*> linked;
+  int indice;
 
-
-  void setValues(const Robot& rbt);
+  void setValues(const Robot& rbt, const int& ind);
   void addLink(Noeud* n);
   bool equalTo(const Robot& rbt) const;
-  void display(const int& n, const bool& withLinks) const;
+  void display(const bool& withLinks) const;
 };
 
 class Graphe {
@@ -23,7 +23,7 @@ public:
   void construitGraphe(const Robot& rbt, const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
 
-  void pluscourtChemin(const Robot& init, const Location& arrivee);
+  void pluscourtChemin(const Robot& init);
   ~Graphe();
 
 private:
@@ -35,7 +35,14 @@ private:
         Robot::Move::TURN_LEFT,
         Robot::Move::TURN_RIGHT,
         Robot::Move::U_TURN
-      };
+  };
+  std::vector<Robot::Status> positions = {
+        Robot::Status::NORTH,
+        Robot::Status::SOUTH,
+        Robot::Status::EAST,
+        Robot::Status::WEST
+  };
+
   int nbsommet = 0;
   std::vector<Noeud*> noeuds;
   Noeud* detruit;

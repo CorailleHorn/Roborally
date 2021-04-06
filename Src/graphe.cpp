@@ -9,8 +9,9 @@
 using namespace RR;
 // ------------- Struct Noeud ------------- //
 
-void Noeud::setValues(const Robot& rbt) {
+void Noeud::setValues(const Robot& rbt, const int& ind) {
   info = rbt;
+  indice = ind;
 }
 
 void Noeud::addLink(Noeud* n) {
@@ -23,8 +24,8 @@ bool Noeud::equalTo(const Robot& rbt) const {
   return false;
 }
 
-void Noeud::display(const int& n, const bool& withLinks) const {
-  std::cout << "Je suis le noeud numero " << n <<  " avec pour coordonnées : "
+void Noeud::display(const bool& withLinks) const {
+  std::cout << "Je suis le noeud numero " << indice <<  " avec pour coordonnées : "
           << std::endl
           << "(" << info.location.line << "," << info.location.column << ") "
           << std::endl;
@@ -46,12 +47,13 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
   detruit = new Noeud();
   detruit->info.location = Location(-1,-1);
   detruit->info.status = Robot::Status::DEAD;
+  detruit->indice = -1;
 
   std::cout<< "starting graph building"<< std::endl;
 
   //on crée le noeud initial
   Noeud* n0 = new Noeud();
-  n0->setValues(rbt);
+  n0->setValues(rbt, 0);
   noeuds.push_back(n0);
   nbsommet++;
 
@@ -75,7 +77,8 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
             noeuds[visited]->addLink(noeuds[tmp]);
           } else {
             Noeud* n = new Noeud;
-            n->setValues(transfer);
+
+            n->setValues(transfer, noeuds.size());
             noeuds.push_back(n);
             nbsommet++;
             noeuds[visited]->addLink(noeuds[nbsommet - 1]);
@@ -83,7 +86,7 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
         }
       }
       if(verbose) {
-        noeuds[visited]->display(visited,true);
+        noeuds[visited]->display(true);
       }
       assert(nbsommet <= 128); // on a calculé qu'il peut y avoir au maximum 128 position possible du robot sur un plateau de 32 cases
     }
@@ -102,12 +105,12 @@ int Graphe::existeDeja(const Robot& rbt) const {
   return -1;
 }
 
-void Graphe::pluscourtChemin(const Robot& init, const Location& arrivee) {
+void Graphe::pluscourtChemin(const Robot& init) {
   int info_noeuds[nbsommet][2];
   int i;
   for(i = 0; i < nbsommet; i++) {
-    info_noeuds[i][0] = 100000; //la distance parcouru
-    info_noeuds[i][1] = 100000; //la cellule parente
+    info_noeuds[i][0] = 10000; //la distance parcouru
+    info_noeuds[i][1] = -1; //la cellule parente
   }
 
   int tmp = existeDeja(init); // on retrouve le noeud de départ dans le graphe
@@ -119,21 +122,45 @@ void Graphe::pluscourtChemin(const Robot& init, const Location& arrivee) {
   info_noeuds[tmp][0] = 0;
   info_noeuds[tmp][1] = tmp; //on met comme parent lui-meme car c'est le point de départ
 
-  int distD;
-  int distA;
+  int distD; // la distance parcouru jusqu'a la cellule étudié
+  int distA; //la distance
+
+  int indiceI; //indice de la cellule liée
 
   while(!file.empty()) {
     tmp = file.front(); //on prend le dernier elem et on le retire de la file
     file.pop();
     distD = info_noeuds[tmp][0] + 1;
-    for(i = 0; i < 7; i++) {
-      distA = info_noeuds[i][0];
-      if(distD < distA) {
-        info_noeuds[i][0] = distD;
-        info_noeuds[i][1] = tmp;
+    for(auto j = noeuds[tmp]->linked.begin(); j != noeuds[tmp]->linked.end(); ++j) {
+
+      indiceI = (*j)->indice; //on récupère l'indice dans le tableau linked
+
+      if(indiceI != -1) { //si l'indice ne correspond pas a la cellule "detruit"
+        distA = info_noeuds[indiceI][0];
+
+        if(distD < distA) {
+          info_noeuds[indiceI][0] = distD;
+          info_noeuds[indiceI][1] = tmp;
+          file.push(indiceI);
+        }
       }
     }
   }
+
+  //on récupère la solution parmi 4 possible (au max)
+  int solution; //indice de la solution (on prendra la première proposé)
+  int poidmin = 100000;
+  for(i = 0; i < 4; i++) {
+    tmp = existeDeja(Robot(Location(5,4), positions[i]));
+    if(tmp != -1 && info_noeuds[tmp][0] < poidmin) {
+      solution = tmp;
+      poidmin = info_noeuds[tmp][0];
+    }
+  }
+  noeuds[solution]->display(true);
+  std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl;
+
+
 }
 
 

@@ -8,6 +8,7 @@ int main() {
   b.save("/tmp/cpy.txt");
   Robot rbt;
   Graphe g(rbt, b);
+  g.pluscourtChemin(rbt);
 
 
   return 0;
