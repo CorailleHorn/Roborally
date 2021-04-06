@@ -126,13 +126,13 @@ void Graphe::pluscourtChemin(const Robot& init) {
   int distA; //la distance
 
   int indiceI; //indice de la cellule liée
+  int indiceM; //indice du mouvements dans le tableau move
 
   while(!file.empty()) {
     tmp = file.front(); //on prend le dernier elem et on le retire de la file
     file.pop();
     distD = info_noeuds[tmp][0] + 1;
     for(auto j = noeuds[tmp]->linked.begin(); j != noeuds[tmp]->linked.end(); ++j) {
-
       indiceI = (*j)->indice; //on récupère l'indice dans le tableau linked
 
       if(indiceI != -1) { //si l'indice ne correspond pas a la cellule "detruit"
