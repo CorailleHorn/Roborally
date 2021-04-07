@@ -2,6 +2,8 @@
 #include <iostream>
 #include <assert.h>
 #include <queue>
+#include <algorithm>
+
 #include "graphe.hpp"
 #include "board.hpp"
 
@@ -142,8 +144,12 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
   int indiceM; //indice du mouvements dans le tableau move
 
   bool withcards = true; //la fonction sera légèrement différente si on donne a la méthode un tableau cards rempli
-  if(cards.empty())
+  if(cards.empty()) {
     withcards = false;
+    std::vector<int> notplayed; //tableau qui constituera les cartes restantes pour une cellule
+    // remarque : on ne tiendra pas compte du  nombre de carte joué ici, ceci sera vérifié lors du résultat en dehors de la méthode
+  }
+  bool legal = true; //par defaut on a toujours le droit de jouer un coup
 
   while(!file.empty()) {
     tmp = file.front(); //on prend le dernier elem et on le retire de la file
@@ -153,7 +159,28 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
     for(auto j = noeuds[tmp]->linked.begin(); j != noeuds[tmp]->linked.end(); ++j) {
       indiceI = (*j)->indice; //on récupère l'indice dans le tableau linked
 
-      if(indiceI != -1) { //si l'indice ne correspond pas a la cellule "detruit"
+      if(withcards) { //on regarde si le coup qui est joué est "LEGAL" => on possède une carte non joué
+        legal = false;
+        std::vector<int> notplayed = cards;
+        //d'abord on enlève les cartes déjà utilisé en remontant les coup joué par les parents
+
+        int parent = tmp;
+        for(i = 0; i < info_noeuds[tmp][0]; i++) { //pour chque parent on vérifie & on enlève la carte du tableau
+          for (auto it = notplayed.begin(); it != notplayed.end(); ++it) {
+            if(info_noeuds[parent][2] == *it) {
+              notplayed.erase(it);
+              break;
+            } //on arrete car on souhaite enlever une seule carte et non plusieurs
+          }
+          parent = info_noeuds[parent][1]; //indice de la cellule parente
+        }
+        //puis on regarde si le coup est autorisé a être joué (la carte est présente dans notplayed)
+
+        if( std::find(notplayed.begin(), notplayed.end(), indiceM) != notplayed.end() )
+          legal = true;
+        }
+
+      if(indiceI != -1 && legal) { //si l'indice ne correspond pas a la cellule "detruit"
         distA = info_noeuds[indiceI][0];
 
         if(distD < distA) {
