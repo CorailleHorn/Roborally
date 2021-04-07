@@ -106,7 +106,7 @@ int Graphe::existeDeja(const Robot& rbt) const {
 }
 
 void Graphe::pluscourtChemin(const Robot& init) {
-  int info_noeuds[nbsommet][3];
+  int info_noeuds[128][3];
   int i;
   for(i = 0; i < nbsommet; i++) {
     info_noeuds[i][0] = 10000; //la distance parcouru
