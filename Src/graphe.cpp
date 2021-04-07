@@ -37,11 +37,12 @@ void Noeud::display(const bool& withLinks) const {
 
 // ------------- Classe Graphe ------------- //
 
-Graphe::Graphe(const Robot& rbt, const Board& board) {
-  construitGraphe(rbt, board, false);
+Graphe::Graphe(const Robot& d, const Board& board, const Location& a) : depart(d), arrivee(a) {
+  construitGraphe(board, false);
+  pluscourtChemin();
 }
 
-void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& verbose) {
+void Graphe::construitGraphe(const Board& board, const bool& verbose) {
 
   //on crée le noeud vers lequel va pointer les déplacements détruit
   detruit = new Noeud();
@@ -53,7 +54,7 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
 
   //on crée le noeud initial
   Noeud* n0 = new Noeud();
-  n0->setValues(rbt, 0);
+  n0->setValues(depart, 0);
   noeuds.push_back(n0);
   nbsommet++;
 
@@ -63,7 +64,7 @@ void Graphe::construitGraphe(const Robot& rbt, const Board& board, const bool& v
 
 
   while(visited < nbsommet) {
-    if( not(noeuds[visited]->info.location == Location(5,4)) ) {
+    if( not(noeuds[visited]->info.location == arrivee) ) {
       for(unsigned int i = 0; i < 7; i++) {
         transfer = noeuds[visited]->info;
         board.play(transfer,moves[i]);
@@ -105,18 +106,17 @@ int Graphe::existeDeja(const Robot& rbt) const {
   return -1;
 }
 
-void Graphe::pluscourtChemin(const Robot& init) {
-  int info_noeuds[128][3];
+void Graphe::pluscourtChemin() {
+  int info_noeuds[128][3]; // au max 128 sommets dans le graphe
   int i;
   for(i = 0; i < nbsommet; i++) {
     info_noeuds[i][0] = 10000; //la distance parcouru
     info_noeuds[i][1] = -1; //la cellule parente
     info_noeuds[i][2] = -1; //le mouvement entre la cellule parente et celle ci
     //(indice dans le tableau move pour économiser de l'espace mémoire)
-
   }
 
-  int tmp = existeDeja(init); // on retrouve le noeud de départ dans le graphe
+  int tmp = existeDeja(depart); // on retrouve le noeud de départ dans le graphe
   if(tmp == -1)
     return; //si jamais la position n'existe pas dans le graphe on termine le programme
   std::queue<int> file; //file d'indice a étudier
@@ -127,7 +127,7 @@ void Graphe::pluscourtChemin(const Robot& init) {
   info_noeuds[tmp][2] = -1;
 
   int distD; // la distance parcouru jusqu'a la cellule étudié
-  int distA; //la distance
+  int distA; // la distance précédente de la cellule liée
 
   int indiceI; //indice de la cellule liée
   int indiceM; //indice du mouvements dans le tableau move
@@ -158,7 +158,7 @@ void Graphe::pluscourtChemin(const Robot& init) {
   int solution; //indice de la solution (on prendra la première proposé au poid le plus faible)
   int poidmin = 100000;
   for(i = 0; i < 4; i++) {
-    tmp = existeDeja(Robot(Location(5,4), positions[i]));
+    tmp = existeDeja(Robot(arrivee, positions[i]));
     if(tmp != -1 && info_noeuds[tmp][0] < poidmin) {
       solution = tmp;
       poidmin = info_noeuds[tmp][0];
@@ -177,7 +177,7 @@ void Graphe::pluscourtChemin(const Robot& init) {
 
 
   //on affiche les résultats en inversant l'odre de lecture du tableau
-  for(int j = 2; j > -1; j--) {
+  for(int j = info_noeuds[solution][0] - 1; j > -1; j--) {
     afficheMouvement(mouvements_opti[j]);
   }
 

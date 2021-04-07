@@ -15,7 +15,7 @@ public:
   int getcard(); //prendre une carte au hasard
   void drawcard(); //le robot prend 9 cartes au hasard
   void playcard(); //ajouter les 5 cartes jouer par le robots
-  void shuffle(); //melanger les cartes
+  
 private:
   Noeud* start;
   const std::vector<Robot::Move> moves = {

@@ -35,8 +35,3 @@ void card::drawcard(){
 void card::playcard(){
   drawcard();//piocher 9 cartes
 }
-
-void card::shuffle(){
-  start->info.location = Location(0,1);
-  drawcard();
-}

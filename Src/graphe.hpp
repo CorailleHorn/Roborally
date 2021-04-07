@@ -20,11 +20,11 @@ struct Noeud {
 class Graphe {
 public:
 
-  Graphe(const Robot& rbt, const Board& board);
-  void construitGraphe(const Robot& rbt, const Board& board, const bool& verbose);
+  Graphe(const Robot& d, const Board& board, const Location& a);
+  void construitGraphe(const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
 
-  void pluscourtChemin(const Robot& init);
+  void pluscourtChemin();
   ~Graphe();
 
 private:
@@ -47,6 +47,9 @@ private:
   int nbsommet = 0;
   std::vector<Noeud*> noeuds;
   Noeud* detruit;
+
+  Robot depart;
+  Location arrivee;
 };
 void afficheMouvement(const int& indice);
 
