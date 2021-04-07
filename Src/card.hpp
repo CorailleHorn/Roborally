@@ -14,10 +14,9 @@ public:
   card(); //constructeur
   int getcard(); //prendre une carte au hasard
   void drawcard(); //le robot prend 9 cartes au hasard
-  void playcard(); //ajouter les 5 cartes jouer par le robots
-  
+  void playcard(const Robot& d, const Board& board, const Location& a); //ajouter les 5 cartes jouer par le robots
+
 private:
-  Noeud* start;
   const std::vector<Robot::Move> moves = {
         Robot::Move::FORWARD_1,
         Robot::Move::FORWARD_2,

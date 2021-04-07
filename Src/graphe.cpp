@@ -37,10 +37,19 @@ void Noeud::display(const bool& withLinks) const {
 
 // ------------- Classe Graphe ------------- //
 
-Graphe::Graphe(const Robot& d, const Board& board, const Location& a) : depart(d), arrivee(a) {
+Graphe::Graphe(const Robot& d,const Location& a): depart(d), arrivee(a) {}
+
+Graphe::Graphe(const Robot& d, const Board& board, const Location& a): depart(d), arrivee(a){
   construitGraphe(board, false);
-  pluscourtChemin();
+  std::vector<int> solutions = pluscourtChemin({});
+
+  for(int j = solutions.size() - 1; j > -1; j--) {
+    afficheMouvement(solutions[j]);
+  }
+
 }
+
+
 
 void Graphe::construitGraphe(const Board& board, const bool& verbose) {
 
@@ -106,7 +115,7 @@ int Graphe::existeDeja(const Robot& rbt) const {
   return -1;
 }
 
-void Graphe::pluscourtChemin() {
+std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
   int info_noeuds[128][3]; // au max 128 sommets dans le graphe
   int i;
   for(i = 0; i < nbsommet; i++) {
@@ -118,7 +127,7 @@ void Graphe::pluscourtChemin() {
 
   int tmp = existeDeja(depart); // on retrouve le noeud de départ dans le graphe
   if(tmp == -1)
-    return; //si jamais la position n'existe pas dans le graphe on termine le programme
+    return {}; //si jamais la position n'existe pas dans le graphe on termine le programme
   std::queue<int> file; //file d'indice a étudier
 
   file.push(tmp); //on ajoute l'indice noeud de départ
@@ -131,6 +140,10 @@ void Graphe::pluscourtChemin() {
 
   int indiceI; //indice de la cellule liée
   int indiceM; //indice du mouvements dans le tableau move
+
+  bool withcards = true; //la fonction sera légèrement différente si on donne a la méthode un tableau cards rempli
+  if(cards.empty())
+    withcards = false;
 
   while(!file.empty()) {
     tmp = file.front(); //on prend le dernier elem et on le retire de la file
@@ -175,12 +188,11 @@ void Graphe::pluscourtChemin() {
     s = info_noeuds[s][1]; //indice de la cellule parente a la solution
   }
 
-
-  //on affiche les résultats en inversant l'odre de lecture du tableau
-  for(int j = info_noeuds[solution][0] - 1; j > -1; j--) {
-    afficheMouvement(mouvements_opti[j]);
-  }
-
+  return mouvements_opti;
+    /*//on affiche les résultats en inversant l'odre de lecture du tableau
+    for(int j = info_noeuds[solution][0] - 1; j > -1; j--) {
+      afficheMouvement(mouvements_opti[j]);
+    }*/
 }
 
 void afficheMouvement(const int& indice) {

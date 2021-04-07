@@ -19,12 +19,12 @@ struct Noeud {
 
 class Graphe {
 public:
-
+  Graphe(const Robot& d, const Location& a);
   Graphe(const Robot& d, const Board& board, const Location& a);
   void construitGraphe(const Board& board, const bool& verbose);
   int existeDeja(const Robot& rbt) const;
 
-  void pluscourtChemin();
+  std::vector<int> pluscourtChemin(std::vector<int> cards);
   ~Graphe();
 
 private:
