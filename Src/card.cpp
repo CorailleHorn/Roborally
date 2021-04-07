@@ -16,7 +16,9 @@ int card::getcard(){
 }
 
 void card::drawcard(){
-  srand(time(0));
+  unsigned int TIME = time(NULL);
+  srand(TIME);
+  std::cout << "Clé de la génération : "<<TIME << std::endl <<std::endl;
   int carte;
   for(int i=0;i<9;i++)
   {
@@ -44,7 +46,7 @@ void card::playcard(const Robot& d, const Board& board, const Location& a){
     }
   }
   else {
-    std::cout << "Pas de solutions trouvé pour le tirage actuel"<< std::endl;
+    std::cout << "Pas de solutions trouvées pour le tirage actuel"<< std::endl;
   }
 
 }

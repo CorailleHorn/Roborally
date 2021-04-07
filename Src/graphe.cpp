@@ -204,8 +204,13 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
       poidmin = info_noeuds[tmp][0];
     }
   }
-
-  std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl << std::endl;
+  if( info_noeuds[solution][0] != 10000 ){
+    std::cout<<"la fin a un poid de : " << info_noeuds[solution][0] << std::endl << std::endl;
+  }
+  else {
+    std::cout<<"Aucun chemin trouvé avec ces cartes..."<<std::endl;
+    return {};
+  }
 
   //on rempli le tableau des mouvements dans l'ordre inverse
   std::vector<int> mouvements_opti;
@@ -215,11 +220,7 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
     s = info_noeuds[s][1]; //indice de la cellule parente a la solution
   }
 
-  return mouvements_opti;
-    /*//on affiche les résultats en inversant l'odre de lecture du tableau
-    for(int j = info_noeuds[solution][0] - 1; j > -1; j--) {
-      afficheMouvement(mouvements_opti[j]);
-    }*/
+  return mouvements_opti; 
 }
 
 void afficheMouvement(const int& indice) {
