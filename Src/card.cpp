@@ -32,21 +32,8 @@ void card::drawcard(){
 
 
 
-void card::playcard(std::vector<Robot::Move> cards){
-  if(cards.size()>5)
-  {
-    shuffle();
-  }
-  //else
-  //{
-    //while(not(Robot(Location(5,4), Robot::Status::EAST))){
-      //play.push_back();
-    //}
-  //}
-}
-
-std::vector<Robot::Move> card::getchosencards(){
-  return play;
+void card::playcard(){
+  drawcard();//piocher 9 cartes
 }
 
 void card::shuffle(){

@@ -12,7 +12,7 @@ int main() {
   g.pluscourtChemin(rbt);
   std::cout<<std::endl;
   card c;
-  c.drawcard();
+  c.playcard();
 
   return 0;
 }
