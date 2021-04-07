@@ -30,7 +30,8 @@ void Noeud::display(const bool& withLinks) const {
   std::cout << "Je suis le noeud numero " << indice <<  " avec pour coordonnées : "
           << std::endl
           << "(" << info.location.line << "," << info.location.column << ") "
-          << std::endl;
+          << std::endl
+          << sizeof(*this) << " octets"<< std::endl;
   if(withLinks) {
     std::cout << "Je pointe sur (normalement 7) : " << linked.size() << " noeud(s)"<< std::endl << std::endl;
   }
@@ -42,7 +43,7 @@ void Noeud::display(const bool& withLinks) const {
 Graphe::Graphe(const Robot& d,const Location& a): depart(d), arrivee(a) {}
 
 Graphe::Graphe(const Robot& d, const Board& board, const Location& a): depart(d), arrivee(a){
-  construitGraphe(board, false);
+  construitGraphe(board, true);
   std::vector<int> solutions = pluscourtChemin({});
 
   for(int j = solutions.size() - 1; j > -1; j--) {
@@ -144,11 +145,9 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
   int indiceM; //indice du mouvements dans le tableau move
 
   bool withcards = true; //la fonction sera légèrement différente si on donne a la méthode un tableau cards rempli
-  if(cards.empty()) {
+  if(cards.empty())
     withcards = false;
-    std::vector<int> notplayed; //tableau qui constituera les cartes restantes pour une cellule
-    // remarque : on ne tiendra pas compte du  nombre de carte joué ici, ceci sera vérifié lors du résultat en dehors de la méthode
-  }
+
   bool legal = true; //par defaut on a toujours le droit de jouer un coup
 
   while(!file.empty()) {
@@ -161,11 +160,12 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
 
       if(withcards) { //on regarde si le coup qui est joué est "LEGAL" => on possède une carte non joué
         legal = false;
-        std::vector<int> notplayed = cards;
+        std::vector<int> notplayed = cards;//tableau qui constituera les cartes restantes pour une cellule
         //d'abord on enlève les cartes déjà utilisé en remontant les coup joué par les parents
-
+        // remarque : on ne tiendra pas compte du  nombre de carte joué ici, ceci sera vérifié lors du résultat en dehors de la méthode
+        
         int parent = tmp;
-        for(i = 0; i < info_noeuds[tmp][0]; i++) { //pour chque parent on vérifie & on enlève la carte du tableau
+        for(i = 0; i < info_noeuds[tmp][0]; i++) { //pour chaque parent on vérifie & on enlève la carte du tableau
           for (auto it = notplayed.begin(); it != notplayed.end(); ++it) {
             if(info_noeuds[parent][2] == *it) {
               notplayed.erase(it);
@@ -220,7 +220,7 @@ std::vector<int> Graphe::pluscourtChemin(std::vector<int> cards) {
     s = info_noeuds[s][1]; //indice de la cellule parente a la solution
   }
 
-  return mouvements_opti; 
+  return mouvements_opti;
 }
 
 void afficheMouvement(const int& indice) {
