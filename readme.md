@@ -1,4 +1,6 @@
-auteurs: Saury jean / Mhenni Hassen
+Auteurs: Saury jean et Mhenni Hassen
+
+Projet visant a créer un graphe en c++ pour représenter les déplacements d'un robot dans un jeu dont le code était fourni, puis d'analyser dans le graphe le plus court chemin en emprunter (utilisation de l'algorithme Djikstra) et enfin d'appliquer le résultat au jeu (résultat donné dans le terminal).
 
 Pour compiler : make 
 Pour lancer : ./test_board 
